@@ -56,4 +56,16 @@
         android:summary="@string/pref_show_google_now_summary"
         android:title="@string/title_show_google_feed"/>
 
+    <Preference
+        android:key="about"
+        android:title="@string/about"
+        android:summary="@string/about_summary"
+        android:icon="@drawable/ic_settings_about"
+        android:layout="@layout/settings_layout">
+    <intent
+            android:action="android.settings.APPLICATION_DETAILS_SETTINGS"
+            android:targetPackage="com.android.launcher3"
+            android:targetClass="com.android.launcher3.settings.SettingsAbout" />
+    </Preference>
+
 </androidx.preference.PreferenceScreen>

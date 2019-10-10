@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <PreferenceScreen
+            android:layout="@layout/cipher_logo"
+            android:key="cipher_logo"
+            android:selectable="false" />
+
+</androidx.preference.PreferenceScreen> 
