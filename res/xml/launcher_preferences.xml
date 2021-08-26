@@ -64,6 +64,15 @@
         android:title="@string/title_show_google_app"/>
 
     <androidx.preference.PreferenceScreen
+
+    <SwitchPreference
+        android:key="pref_recents_show_memory"
+        android:defaultValue="true"
+        android:persistent="true"
+        android:summary="@string/pref_recents_show_memory_summary"
+        android:title="@string/pref_recents_show_memory_title"/>
+
+    <Preference
         android:key="pref_developer_options"
         android:persistent="false"
         android:title="Developer Options"
