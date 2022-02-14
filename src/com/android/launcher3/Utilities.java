@@ -863,4 +863,9 @@ public final class Utilities {
     public static boolean useSleepGesture(Context context) {
         return getPrefs(context).getBoolean(SLEEP_GESTURE, true);
     }
+
+    public static boolean hideSearchBar(Context context) {
+        SharedPreferences prefs = getPrefs(context.getApplicationContext());
+        return prefs.getBoolean(KEY_HIDE_SEARCHBAR, false);
+    }
 }

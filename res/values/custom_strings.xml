@@ -31,4 +31,8 @@
     <string name="pref_sleep_gesture_title">Double tap to sleep</string>
     <string name="pref_sleep_gesture_summary">Double tap on empty space for power-off</string>
 
+    <!-- SearchBar -->
+    <string name="disable_searchbar_title">Hide SearchBar</string>
+    <string name="disable_searchbar_summary">Hide search bar from the homescreen</string>
+
 </resources>

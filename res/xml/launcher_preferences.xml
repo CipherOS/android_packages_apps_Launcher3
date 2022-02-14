@@ -69,4 +69,10 @@
         android:title="Developer Options"
         android:fragment="com.android.launcher3.settings.DeveloperOptionsFragment"/>
 
+    <SwitchPreference
+        android:key="pref_hide_searchbar"
+        android:title="@string/disable_searchbar_title"
+        android:summary="@string/disable_searchbar_summary"
+        android:defaultValue="false"
+        android:persistent="true" />
 </androidx.preference.PreferenceScreen>

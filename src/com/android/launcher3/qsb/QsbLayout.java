@@ -32,6 +32,7 @@ public class QsbLayout extends FrameLayout {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
+        boolean hideSearchBar = Utilities.hideSearchBar(getContext());
         assistantIcon = findViewById(R.id.mic_icon);
         assistantIcon.setIcon();
         lensIcon = findViewById(R.id.lens_icon);
@@ -42,6 +43,10 @@ public class QsbLayout extends FrameLayout {
         if (searchPackage == "com.google.android.googlequicksearchbox") {
             setupLensIcon();
         }
+
+        content.setVisibility(hideSearchBar ? View.GONE : View.VISIBLE);
+        if (hideSearchBar)
+            return;
     }
 
     @Override
