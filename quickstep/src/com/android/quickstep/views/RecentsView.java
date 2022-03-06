@@ -767,7 +767,9 @@ public abstract class RecentsView<ACTIVITY_TYPE extends StatefulActivity<STATE_T
         mActionsView.updateHiddenFlags(HIDDEN_NO_TASKS, getTaskViewCount() == 0);
         mSplitPlaceholderView = splitPlaceholderView;
         mClearAllButton = (Button) mActionsView.findViewById(R.id.clear_all);
-        mClearAllButton.setOnClickListener(this::dismissAllTasks);
+        if (mClearAllButton != null) {
+            mClearAllButton.setOnClickListener(this::dismissAllTasks);
+        }
     }
 
     public SplitPlaceholderView getSplitPlaceholder() {
