@@ -250,6 +250,11 @@ public class TaskOverlayFactory implements ResourceBasedOverride {
             overviewPanel.initiateSplitSelect(mThumbnailView.getTaskView());
         }
 
+        private void clearAllTasks() {
+            final RecentsView recentsView = mThumbnailView.getTaskView().getRecentsView();
+            recentsView.dismissAllTasks();
+        }
+
         /**
          * Called when the overlay is no longer used.
          */
@@ -344,13 +349,32 @@ public class TaskOverlayFactory implements ResourceBasedOverride {
             }
 
             @SuppressLint("NewApi")
+            @Override
             public void onScreenshot() {
                 endLiveTileMode(() -> saveScreenshot(mTask));
             }
 
+            @Override
             public void onSplit() {
                 endLiveTileMode(TaskOverlay.this::enterSplitSelect);
             }
+<<<<<<< HEAD
+=======
+
+            @Override
+            public void onLens() {
+                if (mIsAllowedByPolicy) {
+                    endLiveTileMode(() -> mImageApi.startLensActivity());
+                } else {
+                    showBlockedByPolicyMessage();
+                }
+            }
+
+            @Override
+            public void onClearAllTasksRequested() {
+                endLiveTileMode(TaskOverlay.this::clearAllTasks);
+            }
+>>>>>>> 9c703d4677 (Launcher3: show clear all button in recents overview)
         }
     }
 
@@ -364,5 +388,12 @@ public class TaskOverlayFactory implements ResourceBasedOverride {
 
         /** User wants to start split screen with current app. */
         void onSplit();
+<<<<<<< HEAD
+=======
+
+        void onLens();
+
+        void onClearAllTasksRequested();
+>>>>>>> 9c703d4677 (Launcher3: show clear all button in recents overview)
     }
 }
