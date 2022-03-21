@@ -1669,14 +1669,7 @@ public abstract class RecentsView<CONTAINER_TYPE extends Context & RecentsViewCo
         vibrateForScroll();
     }
 
-    private void vibrateForScroll() {
-        long now = SystemClock.uptimeMillis();
-        if (now - mScrollLastHapticTimestamp > mScrollHapticMinGapMillis) {
-            mScrollLastHapticTimestamp = now;
-            VibratorWrapper.INSTANCE.get(mContext).vibrate(SCROLL_VIBRATION_PRIMITIVE,
-                    SCROLL_VIBRATION_PRIMITIVE_SCALE, SCROLL_VIBRATION_FALLBACK);
-        }
-    }
+    private void vibrateForScroll() {}
 
     @Override
     protected void determineScrollingStart(MotionEvent ev, float touchSlopScale) {
