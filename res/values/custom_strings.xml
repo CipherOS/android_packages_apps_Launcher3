@@ -34,4 +34,7 @@
     <!-- Search bar -->
     <string name="dock_search_title">Google search bar</string>
     <string name="dock_search_summary">Show search bar in the bottom dock</string>
+    <!-- Task Bar -->
+    <string name="pref_allow_phone_taskbar">Use taskbar</string>
+    <string name="pref_allow_phone_taskbar_desc">For opening and switching apps anywhere</string>
 </resources>
