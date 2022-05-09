@@ -225,6 +225,15 @@ public class DeviceProfile {
     public int flingToDeleteThresholdVelocity;
 
     /** TODO: Once we fully migrate to staged split, remove "isMultiWindowMode" */
+
+    // Mid clear all button
+    public int midClearAllMarginGesturePx;
+    public int midClearAllMarginThreeButtonPx;
+
+    // Meminfo in overview
+    public int memInfoMarginGesturePx;
+    public int memInfoMarginThreeButtonPx;
+
     DeviceProfile(Context context, InvariantDeviceProfile inv, Info info, WindowBounds windowBounds,
             boolean isMultiWindowMode, boolean transposeLayoutWithOrientation,
             boolean useTwoPanels) {
@@ -420,6 +429,16 @@ public class DeviceProfile {
         overviewGridSideMargin = isLandscape
                 ? res.getDimensionPixelSize(R.dimen.overview_grid_side_margin_landscape)
                 : res.getDimensionPixelSize(R.dimen.overview_grid_side_margin_portrait);
+
+        midClearAllMarginGesturePx = res.getDimensionPixelSize(
+                R.dimen.mid_clear_all_bottom_margin_gesture);
+        midClearAllMarginThreeButtonPx = res.getDimensionPixelSize(
+                R.dimen.mid_clear_all_bottom_margin_three_button);
+
+        memInfoMarginGesturePx = res.getDimensionPixelSize(
+                R.dimen.meminfo_bottom_margin_gesture);
+        memInfoMarginThreeButtonPx = res.getDimensionPixelSize(
+                R.dimen.meminfo_bottom_margin_three_button);
 
         // Calculate all of the remaining variables.
         extraSpace = updateAvailableDimensions(res);

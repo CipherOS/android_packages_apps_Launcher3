@@ -17,15 +17,19 @@
 package com.android.quickstep.views;
 
 import static android.view.Surface.ROTATION_0;
+import static android.view.Surface.ROTATION_180;
 import static android.view.View.MeasureSpec.EXACTLY;
 import static android.view.View.MeasureSpec.makeMeasureSpec;
 
 import static com.android.launcher3.AbstractFloatingView.TYPE_TASK_MENU;
 import static com.android.launcher3.AbstractFloatingView.getTopOpenViewWithType;
 import static com.android.launcher3.BaseActivity.STATE_HANDLER_INVISIBILITY_FLAGS;
+import static com.android.launcher3.LauncherAnimUtils.SCALE_PROPERTY;
 import static com.android.launcher3.LauncherAnimUtils.SUCCESS_TRANSITION_PROGRESS;
 import static com.android.launcher3.LauncherAnimUtils.VIEW_ALPHA;
 import static com.android.launcher3.LauncherState.BACKGROUND_APP;
+import static com.android.launcher3.LauncherState.OVERVIEW;
+import static com.android.launcher3.LauncherState.OVERVIEW_ACTIONS;
 import static com.android.launcher3.QuickstepTransitionManager.RECENTS_LAUNCH_DURATION;
 import static com.android.launcher3.Utilities.EDGE_NAV_BAR;
 import static com.android.launcher3.Utilities.mapToRange;
@@ -474,6 +478,8 @@ public abstract class RecentsView<ACTIVITY_TYPE extends StatefulActivity<STATE_T
     private int mOverScrollShift = 0;
     private long mScrollLastHapticTimestamp;
 
+    private float mScrollScale = 1f;
+
     /**
      * TODO: Call reloadIdNeeded in onTaskStackChanged.
      */
@@ -643,6 +649,8 @@ public abstract class RecentsView<ACTIVITY_TYPE extends StatefulActivity<STATE_T
     private TaskView mMovingTaskView;
 
     private OverviewActionsView mActionsView;
+    private MidClearAllButton mMidClearAllButton;
+    private MemInfoView mMemInfoView;
 
     private MultiWindowModeChangedListener mMultiWindowModeChangedListener =
             new MultiWindowModeChangedListener() {
@@ -721,6 +729,8 @@ public abstract class RecentsView<ACTIVITY_TYPE extends StatefulActivity<STATE_T
         mActivity.getViewCache().setCacheSize(R.layout.digital_wellbeing_toast, 5);
 
         mTintingColor = getForegroundScrimDimColor(context);
+
+        mScrollScale = getResources().getFloat(R.dimen.overview_scroll_scale);
     }
 
     public OverScroller getScroller() {
@@ -856,10 +866,15 @@ public abstract class RecentsView<ACTIVITY_TYPE extends StatefulActivity<STATE_T
         updateTaskStackListenerState();
     }
 
-    public void init(OverviewActionsView actionsView, SplitSelectStateController splitController) {
+    public void init(OverviewActionsView actionsView, SplitSelectStateController splitController,
+                        MidClearAllButton midClearAllButton, MemInfoView memInfoView) {
         mActionsView = actionsView;
         mActionsView.updateHiddenFlags(HIDDEN_NO_TASKS, getTaskViewCount() == 0);
         mSplitSelectStateController = splitController;
+        mMidClearAllButton = midClearAllButton;
+        mMemInfoView = memInfoView;
+        midClearAllButton.setOnClickListener(this::dismissAllTasks);
+        midClearAllButton.hide(MidClearAllButton.HIDDEN_NO_TASKS, getTaskViewCount() == 0);
     }
 
     public SplitSelectStateController getSplitPlaceholder() {
@@ -929,6 +944,7 @@ public abstract class RecentsView<ACTIVITY_TYPE extends StatefulActivity<STATE_T
             }
             taskView.setTaskViewId(-1);
             mActionsView.updateHiddenFlags(HIDDEN_NO_TASKS, getTaskViewCount() == 0);
+            mMidClearAllButton.hide(MidClearAllButton.HIDDEN_NO_TASKS, getTaskViewCount() == 0);
         }
     }
 
@@ -940,6 +956,7 @@ public abstract class RecentsView<ACTIVITY_TYPE extends StatefulActivity<STATE_T
         // child direction back to match system settings.
         child.setLayoutDirection(mIsRtl ? View.LAYOUT_DIRECTION_LTR : View.LAYOUT_DIRECTION_RTL);
         mActionsView.updateHiddenFlags(HIDDEN_NO_TASKS, false);
+        mMidClearAllButton.hide(MidClearAllButton.HIDDEN_NO_TASKS, false);
         updateEmptyMessage();
     }
 
@@ -1300,14 +1317,7 @@ public abstract class RecentsView<ACTIVITY_TYPE extends StatefulActivity<STATE_T
         vibrateForScroll();
     }
 
-    private void vibrateForScroll() {
-        long now = SystemClock.uptimeMillis();
-        if (now - mScrollLastHapticTimestamp > mScrollHapticMinGapMillis) {
-            mScrollLastHapticTimestamp = now;
-            VibratorWrapper.INSTANCE.get(mContext).vibrate(SCROLL_VIBRATION_PRIMITIVE,
-                    SCROLL_VIBRATION_PRIMITIVE_SCALE, SCROLL_VIBRATION_FALLBACK);
-        }
-    }
+    private void vibrateForScroll() {}
 
     @Override
     protected void determineScrollingStart(MotionEvent ev, float touchSlopScale) {
@@ -1573,8 +1583,10 @@ public abstract class RecentsView<ACTIVITY_TYPE extends StatefulActivity<STATE_T
         mClearAllButton.setFullscreenProgress(fullscreenProgress);
 
         // Fade out the actions view quickly (0.1 range)
-        mActionsView.getFullscreenAlpha().setValue(
-                mapToRange(fullscreenProgress, 0, 0.1f, 1f, 0f, LINEAR));
+        float alpha = mapToRange(fullscreenProgress, 0, 0.1f, 1f, 0f, LINEAR);
+        mActionsView.getFullscreenAlpha().setValue(alpha);
+        mMidClearAllButton.setAlpha(MidClearAllButton.ALPHA_FS_PROGRESS, alpha);
+        mMemInfoView.setAlpha(MemInfoView.ALPHA_FS_PROGRESS, alpha);
     }
 
     private void updateTaskStackListenerState() {
@@ -2310,6 +2322,9 @@ public abstract class RecentsView<ACTIVITY_TYPE extends StatefulActivity<STATE_T
     }
 
     private void animateActionsViewIn() {
+        if ((OVERVIEW.getVisibleElements(null) & OVERVIEW_ACTIONS) == 0)
+            return;
+
         ObjectAnimator anim = ObjectAnimator.ofFloat(
                 mActionsView.getVisibilityAlpha(), MultiValueAlpha.VALUE, 0, 1);
         anim.setDuration(TaskView.SCALE_ICON_DURATION);
@@ -2928,6 +2943,15 @@ public abstract class RecentsView<ACTIVITY_TYPE extends StatefulActivity<STATE_T
                     if (dismissedIndex == negativeAdjacent) {
                         offset += mIsRtl ? -scrollDiffPerPage : scrollDiffPerPage;
                     }
+                }
+
+                if (i == dismissedIndex + 1 ||
+                        dismissedIndex == taskCount -1 && i == dismissedIndex - 1) {
+                    if (child.getScaleX() <= dismissedTaskView.getScaleX())
+                        anim.setFloat(child, SCALE_PROPERTY,
+                            dismissedTaskView.getScaleX(), LINEAR);
+                    else
+                        anim.setFloat(child, SCALE_PROPERTY, 1f, LINEAR);
                 }
 
                 int scrollDiff = newScroll[i] - oldScroll[i] + offset;
@@ -3651,6 +3675,7 @@ public abstract class RecentsView<ACTIVITY_TYPE extends StatefulActivity<STATE_T
                         .setScroll(getScrollOffset()));
         setImportantForAccessibility(isModal() ? IMPORTANT_FOR_ACCESSIBILITY_NO
                 : IMPORTANT_FOR_ACCESSIBILITY_AUTO);
+        doScrollScale();
     }
 
     private void updatePageOffsets() {
@@ -3963,7 +3988,7 @@ public abstract class RecentsView<ACTIVITY_TYPE extends StatefulActivity<STATE_T
                 mActivity.getDeviceProfile(),
                 mSplitSelectStateController.getActiveSplitStagePosition(), firstTaskEndingBounds,
                 secondTaskEndingBounds);
-
+        if (mFirstFloatingTaskView == null) return;
         mFirstFloatingTaskView.getBoundsOnScreen(firstTaskStartingBounds);
         mFirstFloatingTaskView.addAnimation(pendingAnimation,
                 new RectF(firstTaskStartingBounds), firstTaskEndingBounds, mFirstFloatingTaskView,
@@ -4037,8 +4062,10 @@ public abstract class RecentsView<ACTIVITY_TYPE extends StatefulActivity<STATE_T
                 mSplitSelectStateController.getActiveSplitStagePosition(), mTempRect);
         mTempRectF.set(mTempRect);
         // TODO(194414938) set correct corner radius
-        mFirstFloatingTaskView.updateOrientationHandler(mOrientationHandler);
-        mFirstFloatingTaskView.update(mTempRectF, /*progress=*/1f, /*windowRadius=*/0f);
+        if (mFirstFloatingTaskView != null) {
+            mFirstFloatingTaskView.updateOrientationHandler(mOrientationHandler);
+            mFirstFloatingTaskView.update(mTempRectF, /*progress=*/1f, /*windowRadius=*/0f);
+        }
 
         PagedOrientationHandler orientationHandler = getPagedOrientationHandler();
         Pair<FloatProperty, FloatProperty> taskViewsFloat =
@@ -4999,6 +5026,32 @@ public abstract class RecentsView<ACTIVITY_TYPE extends StatefulActivity<STATE_T
     protected void onScrollChanged(int l, int t, int oldl, int oldt) {
         super.onScrollChanged(l, t, oldl, oldt);
         dispatchScrollChanged();
+        doScrollScale();
+    }
+
+    private void doScrollScale() {
+        if (showAsGrid())
+            return;
+
+        boolean isInLandscape = mOrientationState.getTouchRotation() != ROTATION_0
+                                && mOrientationState.getTouchRotation() != ROTATION_180;
+        int childCount = Math.min(mPageScrolls.length, getChildCount());
+        int curScroll = isInLandscape ? getScrollY() : getScrollX();
+
+        for (int i = 0; i < childCount; i++) {
+            View child = getChildAt(i);
+            int scaleArea = child.getWidth() + mPageSpacing;
+            int childPosition = mPageScrolls[i];
+            int scrollDelta = Math.abs(curScroll - childPosition);
+            if (scrollDelta > scaleArea) {
+                child.setScaleX(mScrollScale);
+                child.setScaleY(mScrollScale);
+            } else {
+                float scale = mapToRange(scrollDelta, 0, scaleArea, 1f, mScrollScale, LINEAR);
+                child.setScaleX(scale);
+                child.setScaleY(scale);
+            }
+        }
     }
 
     private void dispatchScrollChanged() {

@@ -30,6 +30,8 @@
     with some minor changed based on the derivative app.
     -->
 
+    <uses-sdk android:minSdkVersion="29"/>
+
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.SET_WALLPAPER" />
     <uses-permission android:name="android.permission.SET_WALLPAPER_HINTS" />
@@ -44,6 +46,7 @@
     <uses-permission android:name="android.permission.ROTATE_SURFACE_FLINGER" />
 
     <uses-permission android:name="android.permission.DEVICE_POWER" />
+    <uses-permission android:name="android.permission.FORCE_STOP_PACKAGES" />
     
     <!--
     Permissions required for read/write access to the workspace data. These permission name
