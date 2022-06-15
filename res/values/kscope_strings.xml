@@ -18,6 +18,6 @@
     <string name="shortcut_uninstall_title">Uninstall</string>
 
     <!-- Memory info -->
-    <string name="meminfo_text">%1$s Available | %2$s Total</string>
+    <string name="meminfo_text">%1$s Available | %2$s </string>
 
 </resources>
