@@ -331,6 +331,13 @@ public class RecentsAnimationDeviceState implements DisplayInfoChangeListener, E
     }
 
     /**
+     * @return whether the current nav mode is 2-button-based.
+     */
+    public boolean isTwoButtonNavMode() {
+        return mMode == TWO_BUTTONS;
+    }
+
+    /**
      * @return the display id for the display that Launcher is running on.
      */
     public int getDisplayId() {
