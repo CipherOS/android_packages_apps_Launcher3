@@ -28,6 +28,7 @@ import androidx.core.graphics.ColorUtils;
 
 import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.Launcher;
+import com.android.launcher3.LauncherPrefs;
 import com.android.launcher3.LauncherState;
 import com.android.launcher3.R;
 import com.android.launcher3.util.DisplayController;
@@ -115,6 +116,7 @@ public class OverviewState extends LauncherState {
         int elements = OVERVIEW_ACTIONS;
         DeviceProfile dp = launcher.getDeviceProfile();
         boolean showFloatingSearch;
+        boolean clearAll = LauncherPrefs.getPrefs(launcher).getBoolean("pref_recents_clear_all", true);
         if (dp.isPhone) {
             // Only show search in phone overview in portrait mode.
             showFloatingSearch = !dp.isLandscape;
@@ -127,6 +129,8 @@ public class OverviewState extends LauncherState {
         }
         if (enableSplitContextual() && launcher.isSplitSelectionActive()) {
             elements &= ~CLEAR_ALL_BUTTON;
+        if (!clearAll) {
+            elements |= CLEAR_ALL_BUTTON;
         }
         return elements;
     }
