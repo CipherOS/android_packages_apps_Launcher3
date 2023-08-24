@@ -5954,6 +5954,7 @@ public abstract class RecentsView<CONTAINER_TYPE extends Context & RecentsViewCo
                     mRecentsAnimationController.screenshotTask(container.getTask().key.id);
             TaskThumbnailViewDeprecated thumbnailView = container.getThumbnailViewDeprecated();
             if (td != null) {
+                container.getTask().thumbnail = td;
                 thumbnailView.setThumbnail(container.getTask(), td);
             } else {
                 thumbnailView.refresh();
