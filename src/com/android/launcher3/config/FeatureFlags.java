@@ -455,7 +455,7 @@ public final class FeatureFlags {
 
     // TODO(Block 29): Clean up flags
     public static final BooleanFlag ENABLE_ALL_APPS_BUTTON_IN_HOTSEAT = getDebugFlag(270393897,
-            "ENABLE_ALL_APPS_BUTTON_IN_HOTSEAT", DISABLED,
+            "ENABLE_ALL_APPS_BUTTON_IN_HOTSEAT", ENABLED,
             "Enables displaying the all apps button in the hotseat.");
 
     public static final BooleanFlag ENABLE_KEYBOARD_QUICK_SWITCH = getDebugFlag(270396844,
