@@ -278,9 +278,6 @@ public class SettingsActivity extends FragmentActivity
                         return true;
                     }
                     return false;
-                    mDeveloperOptionPref = preference;
-                    return updateDeveloperOption();
-
                 case KEY_MINUS_ONE:
                     return LineageUtils.isPackageEnabled(getActivity(), SEARCH_PACKAGE);
             }
