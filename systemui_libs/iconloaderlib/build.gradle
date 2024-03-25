@@ -4,7 +4,7 @@ plugins {
 
 android {
     namespace = "com.android.launcher3.icons"
-    compileSdkVersion COMPILE_SDK
+    compileSdkVersion 34
 
     sourceSets {
         main {
