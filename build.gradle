@@ -174,7 +174,7 @@ dependencies {
 protobuf {
     // Configure the protoc executable
     protoc {
-        artifact = "com.google.protobuf:protoc:${protocVersion}${PROTO_ARCH_SUFFIX}"
+        artifact = "com.google.protobuf:protoc:3.25.3"
     }
     generateProtoTasks {
         all().each { task ->
