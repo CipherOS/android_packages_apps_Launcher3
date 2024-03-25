@@ -19,6 +19,7 @@ apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion COMPILE_SDK
+    namespace 'com.android.launcher3'
 
     defaultConfig {
         minSdkVersion 26
@@ -130,6 +131,9 @@ android {
             java.srcDirs = ['quickstep/src', 'quickstep/recents_ui_overrides/src']
             manifest.srcFile "quickstep/AndroidManifest.xml"
         }
+    }
+    buildFeatures {
+        buildConfig true
     }
 }
 
