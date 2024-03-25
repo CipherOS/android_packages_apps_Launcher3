@@ -6,6 +6,7 @@ buildscript {
     dependencies {
         classpath GRADLE_CLASS_PATH
         classpath PROTOBUF_CLASS_PATH
+        classpath KOTLIN_CLASS_PATH
     }
 }
 
@@ -14,6 +15,7 @@ final String FRAMEWORK_PREBUILTS_DIR = "${ANDROID_TOP}/prebuilts/framework_inter
 
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.protobuf'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion COMPILE_SDK
@@ -143,6 +145,8 @@ allprojects {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['libGoogleFeed.jar'])
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.23"
 
     implementation "androidx.dynamicanimation:dynamicanimation:${ANDROID_X_VERSION}"
     implementation "androidx.recyclerview:recyclerview:${ANDROID_X_VERSION}"
