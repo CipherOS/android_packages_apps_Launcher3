@@ -6,6 +6,10 @@ android {
     namespace = "com.android.launcher3.icons"
     compileSdkVersion 34
 
+    defaultConfig {
+        vectorDrawables.useSupportLibrary = true
+    }
+
     sourceSets {
         main {
             java.srcDirs = ['src', 'src_full_lib']
