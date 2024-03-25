@@ -367,8 +367,8 @@ public class BaseIconFactory implements AutoCloseable {
      * Wraps the provided icon in an adaptive icon drawable
      */
     public AdaptiveIconDrawable wrapToAdaptiveIcon(@NonNull Drawable icon) {
-        if (icon instanceof AdaptiveIconDrawable aid) {
-            return aid;
+        if (icon instanceof AdaptiveIconDrawable) {
+            return (AdaptiveIconDrawable) icon;
         } else {
             EmptyWrapper foreground = new EmptyWrapper();
             AdaptiveIconDrawable dr = new AdaptiveIconDrawable(
