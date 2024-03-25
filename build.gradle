@@ -17,7 +17,6 @@ apply plugin: 'com.google.protobuf'
 
 android {
     compileSdkVersion COMPILE_SDK
-    buildToolsVersion BUILD_TOOLS_VERSION
 
     defaultConfig {
         minSdkVersion 26
