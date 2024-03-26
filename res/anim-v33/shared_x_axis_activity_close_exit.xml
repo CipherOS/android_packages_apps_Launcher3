@@ -24,7 +24,7 @@
         android:fillEnabled="true"
         android:fillBefore="true"
         android:fillAfter="true"
-        android:interpolator="@interpolator/standard_accelerate_interpolator"
+        android:interpolator="@android:anim/accelerate_interpolator"
         android:startOffset="0"
         android:duration="100" />
 
@@ -34,7 +34,7 @@
         android:fillEnabled="true"
         android:fillBefore="true"
         android:fillAfter="true"
-        android:interpolator="@interpolator/emphasized_interpolator"
+        android:interpolator="@android:anim/accelerate_decelerate_interpolator"
         android:startOffset="0"
         android:duration="450" />
 
