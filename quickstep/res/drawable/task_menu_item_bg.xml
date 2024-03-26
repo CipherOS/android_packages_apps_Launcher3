@@ -20,7 +20,7 @@
      android:color="?android:attr/colorControlHighlight">
      <item>
           <shape>
-              <solid android:color="?androidprv:attr/colorSurface" />
+              <solid android:color="?attr/colorSurface" />
               <corners android:radius="@dimen/task_menu_item_corner_radius" />
           </shape>
      </item>

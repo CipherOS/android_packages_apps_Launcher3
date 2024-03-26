@@ -144,6 +144,7 @@ allprojects {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['libGoogleFeed.jar'])
 
+    implementation "com.google.android.material:material:1.11.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.23"
 
     implementation "androidx.dynamicanimation:dynamicanimation:${ANDROID_X_VERSION}"
