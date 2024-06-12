@@ -29,7 +29,6 @@ import android.app.ActivityOptions;
 import android.app.Person;
 import android.app.WallpaperManager;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.pm.LauncherActivityInfo;
 import android.content.pm.LauncherApps;
 import android.content.pm.ShortcutInfo;
@@ -80,7 +79,6 @@ import androidx.core.graphics.ColorUtils;
 
 import com.android.launcher3.dragndrop.FolderAdaptiveIcon;
 import com.android.launcher3.graphics.TintedDrawableSpan;
-import com.android.launcher3.icons.BaseIconFactory;
 import com.android.launcher3.icons.BitmapInfo;
 import com.android.launcher3.icons.LauncherIcons;
 import com.android.launcher3.icons.ShortcutCachingLogic;
@@ -92,6 +90,7 @@ import com.android.launcher3.pm.UserCache;
 import com.android.launcher3.shortcuts.ShortcutKey;
 import com.android.launcher3.shortcuts.ShortcutRequest;
 import com.android.launcher3.testing.shared.ResourceUtils;
+import com.android.launcher3.util.FlagOp;
 import com.android.launcher3.util.IntArray;
 import com.android.launcher3.util.SplitConfigurationOptions.SplitPositionOption;
 import com.android.launcher3.util.Themes;
@@ -121,15 +120,6 @@ public final class Utilities {
 
     public static final String[] EMPTY_STRING_ARRAY = new String[0];
     public static final Person[] EMPTY_PERSON_ARRAY = new Person[0];
-
-    @ChecksSdkIntAtLeast(api = VERSION_CODES.P)
-    public static final boolean ATLEAST_P = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P;
-
-    @ChecksSdkIntAtLeast(api = VERSION_CODES.Q)
-    public static final boolean ATLEAST_Q = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q;
-
-    @ChecksSdkIntAtLeast(api = VERSION_CODES.R)
-    public static final boolean ATLEAST_R = Build.VERSION.SDK_INT >= Build.VERSION_CODES.R;
 
     @ChecksSdkIntAtLeast(api = VERSION_CODES.S)
     public static final boolean ATLEAST_S = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S;
@@ -677,12 +667,11 @@ public final class Utilities {
         }
 
         if (badge == null) {
-            try (LauncherIcons li = LauncherIcons.obtain(context)) {
-                badge = BitmapInfo.LOW_RES_INFO.withFlags(
-                                li.getBitmapFlagOp(new BaseIconFactory.IconOptions().setUser(
-                                        UserCache.INSTANCE.get(context).getUserInfo(info.user))))
-                        .getBadgeDrawable(context, useTheme);
-            }
+            badge = BitmapInfo.LOW_RES_INFO.withFlags(
+                            UserCache.INSTANCE.get(context)
+                                    .getUserInfo(info.user)
+                                    .applyBitmapInfoFlags(FlagOp.NO_OP))
+                    .getBadgeDrawable(context, useTheme);
             if (badge == null) {
                 badge = new ColorDrawable(Color.TRANSPARENT);
             }
@@ -842,8 +831,9 @@ public final class Utilities {
         }
     }
 
-    public static boolean isWorkspaceEditAllowed(Context context) {
-        SharedPreferences prefs = LauncherPrefs.getPrefs(context.getApplicationContext());
-        return !prefs.getBoolean(InvariantDeviceProfile.KEY_WORKSPACE_LOCK, false);
+    /** Encapsulates two flag checks into a single one. */
+    public static boolean enableSupportForArchiving() {
+        return Flags.enableSupportForArchiving()
+                || getSystemProperty("pm.archiving.enabled", "false").equals("true");
     }
 }

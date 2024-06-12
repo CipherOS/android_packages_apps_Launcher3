@@ -52,8 +52,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.launcher3.BuildConfig;
 import com.android.launcher3.LauncherFiles;
 import com.android.launcher3.R;
-import com.android.launcher3.Utilities;
-import com.android.launcher3.cipheros.CipherOSUtils;
 import com.android.launcher3.model.WidgetsModel;
 import com.android.launcher3.states.RotationHelper;
 import com.android.launcher3.uioverrides.flags.DeveloperOptionsUI;
@@ -73,9 +71,6 @@ public class SettingsActivity extends FragmentActivity
     private static final String NOTIFICATION_DOTS_PREFERENCE_KEY = "pref_icon_badging";
 
     public static final String EXTRA_FRAGMENT_ARGS = ":settings:fragment_args";
-    
-    private static final String KEY_MINUS_ONE = "pref_enable_minus_one";
-    private static final String SEARCH_PACKAGE = "com.google.android.googlequicksearchbox";
 
     // Intent extra to indicate the pref-key to highlighted when opening the settings activity
     public static final String EXTRA_FRAGMENT_HIGHLIGHT_KEY = ":settings:fragment_args_key";
@@ -124,7 +119,7 @@ public class SettingsActivity extends FragmentActivity
     }
 
     private boolean startPreference(String fragment, Bundle args, String key) {
-        if (Utilities.ATLEAST_P && getSupportFragmentManager().isStateSaved()) {
+        if (getSupportFragmentManager().isStateSaved()) {
             // Sometimes onClick can come after onPause because of being posted on the handler.
             // Skip starting new preferences in that case.
             return false;
@@ -245,19 +240,11 @@ public class SettingsActivity extends FragmentActivity
                 case NOTIFICATION_DOTS_PREFERENCE_KEY:
                     return !WidgetsModel.GO_DISABLE_NOTIFICATION_DOTS;
 
-                case KEY_MINUS_ONE:
-                    return CipherOSUtils.isPackageEnabled(getActivity(), SEARCH_PACKAGE);
-                    
                 case ALLOW_ROTATION_PREFERENCE_KEY:
                     DisplayController.Info info =
                             DisplayController.INSTANCE.get(getContext()).getInfo();
                     if (info.isTablet(info.realBounds)) {
                         // Launcher supports rotation by default. No need to show this setting.
-                        return false;
-                    }
-                    if (!getContext().getResources().getBoolean(
-                            com.android.internal.R.bool.config_supportAutoRotation)) {
-                        // Not supported by the device, hide setting.
                         return false;
                     }
                     // Initialize the UI once
