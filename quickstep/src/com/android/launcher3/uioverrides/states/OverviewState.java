@@ -129,6 +129,7 @@ public class OverviewState extends LauncherState {
         }
         if (enableSplitContextual() && launcher.isSplitSelectionActive()) {
             elements &= ~CLEAR_ALL_BUTTON;
+        }
         if (!clearAll) {
             elements |= CLEAR_ALL_BUTTON;
         }
